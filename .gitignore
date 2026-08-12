@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Runtime state. Never commit a real context store.
+.open-context/
+*.sqlite
+*.sqlite3
+*.db
+
+# Local config and secrets
+.env
+.env.*
+config.local.toml
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
