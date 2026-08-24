@@ -66,3 +66,18 @@ class ArchiveFormatError(ArchiveError):
         super().__init__(f"archive format is {found!r}, this build expects {expected!r}")
         self.found = found
         self.expected = expected
+
+
+class ManifestMismatchError(ArchiveError):
+    """The manifest names a different session than the directory holding it.
+
+    The directory name is the identity the caller asked for. A manifest that
+    disagrees means the directory was copied, renamed, or assembled by hand, and
+    reading it would attribute one session's conversation to another. That is a
+    worse failure than refusing to open, so it is refused.
+    """
+
+    def __init__(self, expected: str, found: str) -> None:
+        super().__init__(f"manifest declares session {found!r} but it was found under {expected!r}")
+        self.expected = expected
+        self.found = found

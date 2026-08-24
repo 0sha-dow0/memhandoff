@@ -4,7 +4,20 @@
 
 **No third-party code has been copied or adapted into this repository.**
 
-Phase 0 vendors nothing. The dependency list is empty apart from development tools, which are ordinary PyPI dependencies and are not vendored.
+Nothing is vendored. Dependencies are ordinary PyPI packages, installed and
+imported rather than copied in:
+
+| Package | License | Why |
+| --- | --- | --- |
+| `pydantic` | MIT | the data model; the only direct runtime dependency |
+| `pydantic-core` | MIT | pulled in by pydantic; listed because it ships in the same install |
+| `pytest`, `ruff`, `mypy` | MIT | development only, not installed with the package |
+
+All MIT, which is compatible with this project's Apache-2.0 licence. Licences
+were read from each package's own installed metadata rather than from memory.
+
+Providers are reached over raw `urllib` rather than through any vendor SDK, so
+no provider client library is a dependency of this project.
 
 This file exists from the first commit so that the review process is in place before there is any pressure to skip it.
 

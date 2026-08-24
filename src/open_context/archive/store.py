@@ -57,11 +57,16 @@ class Archive:
         return log
 
     def open(self, session_id: str) -> SessionLog:
-        """Open an existing log, recovering a torn tail if there is one."""
+        """Open an existing log, recovering a torn tail if there is one.
+
+        The manifest must agree that this directory holds ``session_id``.
+        Opening a log whose manifest names another session would attribute one
+        conversation to another, so it is refused rather than reconciled.
+        """
         if not self.exists(session_id):
             raise ArchiveNotFoundError(session_id)
         log = SessionLog(self._directory(session_id))
-        log._open_existing()
+        log._open_existing(session_id)
         return log
 
     def open_or_create(self, session_id: str) -> SessionLog:

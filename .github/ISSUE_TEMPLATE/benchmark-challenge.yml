@@ -1,0 +1,109 @@
+name: Benchmark Challenge
+description: Propose a scenario the current benchmark cannot catch, or argue the evaluation is wrong.
+title: "[benchmark] "
+labels: ["benchmark"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The benchmark is published with negative and inconclusive results on
+        purpose. It is the part of this project most worth attacking.
+
+        **One rule:** a change must not be designed to make the project's score
+        look better. A scenario that only the newest strategy passes, added by
+        the person who wrote that strategy, is not evidence. Scenarios that make
+        every arm look worse are welcome and have been added before.
+
+        Read [docs/adversarial.md](../../docs/adversarial.md) first — the
+        dataset already covers early/middle/late placement, reversed decisions,
+        negative constraints, exact values, similar entities, failed approaches,
+        long irrelevant sections, temporal state, and tool-heavy sessions.
+
+        **Before you paste anything:** remove API keys, tokens, credentials,
+        `.env` contents, private conversations, proprietary code, customer data,
+        and personal information. A `.ctx` package contains real conversation
+        text — read it before attaching it. If a faithful reproduction would
+        require private material, build a smaller synthetic one that fails the
+        same way; that is usually a better bug report anyway.
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: What the conversation contains, and what makes it hard.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What a compaction that worked would have preserved.
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behaviour
+      description: What actually happens today, if you have run it.
+
+  - type: dropdown
+    id: strategy
+    attributes:
+      label: Strategy
+      options:
+        - simple_summary_v1
+        - phase_5_baseline
+        - hybrid_v1
+        - all arms
+        - not run yet
+
+  - type: input
+    id: budget
+    attributes:
+      label: Token budget
+      placeholder: "160"
+
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: Free models only for this repository's own runs. See CONTRIBUTING.
+      placeholder: openai/gpt-oss-120b on Groq
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this case is difficult
+      description: |
+        What property makes it hard — position, vocabulary, ambiguity, length,
+        a value that cannot be paraphrased? This is the part that decides
+        whether the scenario teaches anything.
+    validations:
+      required: true
+
+  - type: textarea
+    id: metric
+    attributes:
+      label: Proposed metric
+      description: |
+        How should success be scored? Deterministic checks assert presence;
+        judged questions assert absence. A check that fails a correct answer for
+        naming what it rejected is the mistake that made eight of ten findings
+        false in an early run.
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      render: shell
+
+  - type: checkboxes
+    id: honest
+    attributes:
+      label: Before submitting
+      options:
+        - label: This scenario is not constructed to flatter any particular strategy.
+          required: true
+        - label: I have removed credentials and private data from everything above.
+          required: true

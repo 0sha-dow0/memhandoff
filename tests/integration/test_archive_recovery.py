@@ -4,6 +4,8 @@ The archive must never treat a partial write as valid conversation history.
 These tests simulate the failures rather than assuming filesystem behaviour.
 """
 
+import json
+
 import pytest
 
 from open_context.archive import (
@@ -11,11 +13,13 @@ from open_context.archive import (
     Archive,
     ArchiveFormatError,
     CorruptRecordError,
+    ManifestMismatchError,
 )
 
 pytestmark = pytest.mark.integration
 
 SESSION = "ses_" + "b" * 24
+OTHER_SESSION = "ses_" + "d" * 24
 
 
 @pytest.fixture
@@ -182,13 +186,76 @@ def test_an_unknown_format_is_refused(archive, tmp_path):
 def test_a_future_format_version_is_refused(archive, tmp_path):
     seed(archive, 2)
     manifest = tmp_path / "archive" / "sessions" / SESSION / "manifest.json"
-    import json
-
     payload = json.loads(manifest.read_text())
     payload["version"] = 99
     manifest.write_text(json.dumps(payload))
     with pytest.raises(ArchiveFormatError, match="v99"):
         archive.open(SESSION)
+
+
+def manifest_path(tmp_path, session_id=SESSION):
+    return tmp_path / "archive" / "sessions" / session_id / "manifest.json"
+
+
+def test_a_manifest_naming_another_session_is_refused(archive, tmp_path):
+    """The directory name is the identity the caller asked for.
+
+    A manifest that disagrees means the directory was copied, renamed, or
+    assembled by hand. Opening it would attribute one session's conversation to
+    another, which is worse than refusing.
+    """
+    seed(archive, 3)
+    manifest = manifest_path(tmp_path)
+    payload = json.loads(manifest.read_text())
+    manifest.write_text(json.dumps({**payload, "session_id": OTHER_SESSION}))
+
+    with pytest.raises(ManifestMismatchError) as info:
+        archive.open(SESSION)
+    assert info.value.expected == SESSION
+    assert info.value.found == OTHER_SESSION
+
+    manifest.write_text(json.dumps(payload))
+    assert archive.open(SESSION).count == 3, "the refusal left the archive untouched"
+
+
+def test_a_manifest_with_no_session_id_is_refused(archive, tmp_path):
+    """An absent identity is not an identity that happens to match."""
+    seed(archive, 2)
+    manifest = manifest_path(tmp_path)
+    payload = json.loads(manifest.read_text())
+    del payload["session_id"]
+    manifest.write_text(json.dumps(payload))
+
+    with pytest.raises(ManifestMismatchError):
+        archive.open(SESSION)
+
+
+def test_a_valid_manifest_still_opens_normally(archive, tmp_path):
+    """The identity check must not cost the ordinary case."""
+    seed(archive, 3)
+    assert json.loads(manifest_path(tmp_path).read_text())["session_id"] == SESSION
+
+    log = archive.open(SESSION)
+    assert log.count == 3
+    assert log.session_id == SESSION
+    assert log.recovery.clean
+    assert log.verify().ok
+    assert log.read(2).payload["content"] == "m2"
+
+
+def test_each_session_is_checked_against_its_own_manifest(archive, tmp_path):
+    """One damaged manifest must not cost the other sessions."""
+    seed(archive, 2)
+    other = archive.create(OTHER_SESSION)
+    other.append("msg_0", {"content": "theirs"})
+
+    manifest = manifest_path(tmp_path)
+    payload = json.loads(manifest.read_text())
+    manifest.write_text(json.dumps({**payload, "session_id": OTHER_SESSION}))
+
+    with pytest.raises(ManifestMismatchError):
+        archive.open(SESSION)
+    assert archive.open(OTHER_SESSION).read(0).payload["content"] == "theirs"
 
 
 def test_repeated_reopen_is_stable(archive):

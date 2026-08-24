@@ -20,6 +20,7 @@ MESSAGE: Final = "msg"
 SESSION: Final = "ses"
 EVIDENCE: Final = "ev"
 SNAPSHOT: Final = "snap"
+PACKAGE: Final = "ctx"
 
 GOAL: Final = "goal"
 CONSTRAINT: Final = "con"
@@ -38,6 +39,7 @@ KNOWN_PREFIXES: Final[frozenset[str]] = frozenset(
         SESSION,
         EVIDENCE,
         SNAPSHOT,
+        PACKAGE,
         GOAL,
         CONSTRAINT,
         FACT,

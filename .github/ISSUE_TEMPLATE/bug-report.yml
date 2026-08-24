@@ -1,0 +1,90 @@
+name: Bug Report
+description: Something crashes, errors, or behaves incorrectly.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For context that went missing during compaction, please use the
+        **Context Loss Report** template instead — it asks the right questions.
+
+        **Before you paste anything:** remove API keys, tokens, credentials,
+        `.env` contents, private conversations, proprietary code, customer data,
+        and personal information. A `.ctx` package contains real conversation
+        text — read it before attaching it. If a faithful reproduction would
+        require private material, build a smaller synthetic one that fails the
+        same way; that is usually a better bug report anyway.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`pip show open-context-runtime`, or the commit if installed from source."
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation method
+      options:
+        - pip install open-context-runtime
+        - built wheel
+        - editable install from source (pip install -e ".[dev]")
+        - other
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS and Python version.
+      placeholder: macOS 15.3, Python 3.12.4
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      render: shell
+      placeholder: open-context handoff session.jsonl --store ./ctx --out project.ctx
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or traceback
+      render: text
+
+  - type: checkboxes
+    id: sanitised
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have removed API keys, tokens, credentials, private conversation text, and personal data.
+          required: true

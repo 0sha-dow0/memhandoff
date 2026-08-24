@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720" height="260" role="img">
+<title>Test suite</title>
+<defs>
+<pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+<line x1="0" y1="0" x2="0" y2="7" stroke="#1f1d2b" stroke-width="1.1" opacity="0.30"/>
+</pattern>
+</defs>
+<rect width="720" height="260" fill="#fdfcf8"/>
+<path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="url(#hatch)"/>
+<path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="248.0" y="152.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="26" fill="#1f1d2b" text-anchor="middle" font-weight="bold">1,285</text>
+<text x="248.0" y="178.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="14" fill="#8a8598" text-anchor="middle" font-weight="normal">passed</text>
+<path d="M452.7,107.8 L557.6,109.0 L558.1,200.7 L453.8,199.1 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M452.7,107.8 L557.6,109.0 L558.1,200.7 L453.8,199.1 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="506.0" y="152.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="26" fill="#1f1d2b" text-anchor="middle" font-weight="bold">2</text>
+<text x="506.0" y="178.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="14" fill="#8a8598" text-anchor="middle" font-weight="normal">skipped</text>
+<path d="M567.0,108.9 L669.7,106.9 L670.0,200.0 L566.8,200.3 Z" fill="#fdfcf8" opacity="0.85"/>
+<path d="M567.0,108.9 L669.7,106.9 L670.0,200.0 L566.8,200.3 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="618.0" y="152.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="26" fill="#1f1d2b" text-anchor="middle" font-weight="bold">0</text>
+<text x="618.0" y="178.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="14" fill="#8a8598" text-anchor="middle" font-weight="normal">failed</text>
+<text x="30.0" y="38.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="23" fill="#1f1d2b" text-anchor="start" font-weight="bold">Test suite</text>
+<text x="30.0" y="62.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="start" font-weight="normal">pytest, run to produce this chart</text>
+<text x="30.0" y="236.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#8a8598" text-anchor="start" font-weight="normal">The two skipped tests call a real provider and skip when no credential is present.</text>
+</svg>

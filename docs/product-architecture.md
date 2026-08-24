@@ -81,6 +81,8 @@ No cloud dependency is required for storage, search, inspection, compaction book
 
 A cloud LLM may receive the compiled context when the user chooses a cloud model. That is the user's choice at compile time, not an architectural requirement. `Open Context + Ollama` must work with nothing else installed.
 
+That promise is now structural rather than aspirational. Every model call goes through the `LLMProvider` and `Tokenizer` interfaces, providers register themselves by name, and no vendor SDK is a dependency of the base package — so a user who only wants local models installs nothing belonging to a cloud provider. See [llm.md](llm.md).
+
 Not designed around: AWS, S3, cloud databases, hosted vector databases, SaaS infrastructure, remote memory services.
 
 ## Lightweight
@@ -179,7 +181,11 @@ Metrics: critical fact retention, constraint retention, decision retention, deci
 
 The corpus must include the cases that break naive summarization: important information stated early and never repeated, contradictory decisions, decisions later reversed, negative constraints ("do not use X"), exact numbers, similar-looking entities, failed approaches, long irrelevant stretches, and facts that change over time.
 
-Not implemented in this step. It is a required future component and now has phases of its own.
+Arm B now exists in the codebase. Phase 5 built a baseline compactor — historical summary plus verbatim recent window, held to a measured token budget — precisely so there is something concrete to measure arm D against. It is a control, not a contribution, and it produces an internal experimental representation rather than a portable package. See [baseline-compaction.md](baseline-compaction.md).
+
+Phase 5.5 built the harness that runs the comparison: arms A and B exist, arm C is a seam, arm D is unwritten. The same task, model, prompt, and budget are held identical across arms, and the harness refuses to truncate the full-context condition to make it fit — it reports the reference condition unavailable instead. See [evaluation.md](evaluation.md).
+
+**No arm has been measured.** The apparatus exists; nothing in this repository states how any strategy performs, and nothing should until a real model has been run against the dataset.
 
 ## What this is not
 

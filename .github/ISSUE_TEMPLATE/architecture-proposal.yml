@@ -1,0 +1,75 @@
+name: Architecture Proposal
+description: Propose a change to how MemHandoff works, with an experiment that would test it.
+title: "[proposal] "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposals backed by evidence get built. Proposals backed by intuition get
+        discussed, which is also fine — say which one this is.
+
+        This project has repeatedly been wrong about what would help: a priority
+        order argued from plausibility contradicted the measurement that
+        motivated it, and a whole benchmark run was voided because a result
+        looked decisive. So the most valuable field below is the last one.
+
+        **Before you paste anything:** remove API keys, tokens, credentials,
+        `.env` contents, private conversations, proprietary code, customer data,
+        and personal information. A `.ctx` package contains real conversation
+        text — read it before attaching it. If a faithful reproduction would
+        require private material, build a smaller synthetic one that fails the
+        same way; that is usually a better bug report anyway.
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behaviour
+      description: What happens today, and where in the code.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem being solved
+      description: Ideally something observable — a failing case, a benchmark result, a cost.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why-better
+    attributes:
+      label: Why this approach rather than the obvious one
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected benchmark impact
+      description: |
+        Including "none" or "probably worse on cost". A change that improves
+        clarity without improving scores is still worth making, but say so.
+
+  - type: textarea
+    id: experiment
+    attributes:
+      label: What experiment would show you were wrong?
+      description: |
+        The most important field here. If nothing would, the proposal is a
+        preference rather than a hypothesis — which is worth knowing before
+        anyone builds it.
+    validations:
+      required: true

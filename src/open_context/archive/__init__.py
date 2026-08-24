@@ -15,6 +15,7 @@ from open_context.archive.errors import (
     ArchiveNotFoundError,
     CorruptRecordError,
     DuplicateSeqError,
+    ManifestMismatchError,
     RecordNotFoundError,
 )
 from open_context.archive.index import ENTRY_SIZE, OffsetIndex
@@ -41,6 +42,7 @@ __all__ = [
     "CorruptRecordError",
     "DuplicateSeqError",
     "IntegrityReport",
+    "ManifestMismatchError",
     "OffsetIndex",
     "RecordNotFoundError",
     "RecoveryReport",

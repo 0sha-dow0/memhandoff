@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 430" width="760" height="430" role="img">
+<title>What compaction costs</title>
+<defs>
+<pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+<line x1="0" y1="0" x2="0" y2="7" stroke="#1f1d2b" stroke-width="1.1" opacity="0.30"/>
+</pattern>
+</defs>
+<rect width="760" height="430" fill="#fdfcf8"/>
+<path d="M149.0,319.2 Q424.0,318.9 699.8,320.4" fill="none" stroke="#1f1d2b" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M149.5,320.5 Q425.5,319.0 699.3,320.5" fill="none" stroke="#1f1d2b" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M150.1,319.9 Q148.9,213.7 149.8,111.0" fill="none" stroke="#1f1d2b" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M150.9,319.8 Q149.6,216.3 149.4,109.7" fill="none" stroke="#1f1d2b" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M212.0,193.3 L257.1,194.3 L258.1,320.9 L212.5,319.2 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M212.0,193.3 L257.1,194.3 L258.1,320.9 L212.5,319.2 Z" fill="url(#hatch)"/>
+<path d="M212.0,193.3 L257.1,194.3 L258.1,320.9 L212.5,319.2 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="234.9" y="184.1" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">2,020</text>
+<path d="M264.1,146.8 L305.8,146.0 L308.2,320.4 L262.4,320.8 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M264.1,146.8 L305.8,146.0 L308.2,320.4 L262.4,320.8 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="285.1" y="135.4" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">2,802</text>
+<text x="260.0" y="344.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#1f1d2b" text-anchor="middle" font-weight="normal">full context</text>
+<text x="260.0" y="360.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#1f1d2b" text-anchor="middle" font-weight="normal">(reference)</text>
+<path d="M370.6,311.6 L414.4,311.7 L412.7,319.5 L369.5,319.7 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M370.6,311.6 L414.4,311.7 L412.7,319.5 L369.5,319.7 Z" fill="url(#hatch)"/>
+<path d="M370.6,311.6 L414.4,311.7 L412.7,319.5 L369.5,319.7 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="392.0" y="302.5" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">121</text>
+<path d="M420.7,116.2 L465.6,116.6 L465.7,320.8 L419.7,319.1 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M420.7,116.2 L465.6,116.6 L465.7,320.8 L419.7,319.1 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="442.3" y="105.2" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">3,286</text>
+<text x="417.1" y="344.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#1f1d2b" text-anchor="middle" font-weight="normal">plain summary</text>
+<path d="M527.5,312.4 L571.6,311.1 L570.3,321.2 L527.4,320.5 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M527.5,312.4 L571.6,311.1 L570.3,321.2 L527.4,320.5 Z" fill="url(#hatch)"/>
+<path d="M527.5,312.4 L571.6,311.1 L570.3,321.2 L527.4,320.5 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="549.1" y="302.2" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">125</text>
+<path d="M576.3,109.7 L622.6,110.4 L622.8,319.2 L577.3,320.8 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M576.3,109.7 L622.6,110.4 L622.8,319.2 L577.3,320.8 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="599.4" y="100.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#1f1d2b" text-anchor="middle" font-weight="normal">3,370</text>
+<text x="574.3" y="344.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#1f1d2b" text-anchor="middle" font-weight="normal">Phase 5</text>
+<text x="574.3" y="360.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#1f1d2b" text-anchor="middle" font-weight="normal">baseline</text>
+<path d="M150.0,194.1 Q425.0,194.1 700.0,194.1" fill="none" stroke="#8a8598" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="4 6"/>
+<text x="704.0" y="198.1" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="start" font-weight="normal">original</text>
+<text x="704.0" y="212.1" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="start" font-weight="normal">2,020</text>
+<path d="M149.8,78.8 L164.2,76.9 L162.9,90.4 L148.9,88.1 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M149.8,78.8 L164.2,76.9 L162.9,90.4 L148.9,88.1 Z" fill="url(#hatch)"/>
+<path d="M149.8,78.8 L164.2,76.9 L162.9,90.4 L148.9,88.1 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="170.0" y="88.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="start" font-weight="normal">context handed to the model</text>
+<path d="M399.5,78.6 L415.0,77.9 L414.0,89.8 L399.4,88.6 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M399.5,78.6 L415.0,77.9 L414.0,89.8 L399.4,88.6 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="420.0" y="88.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="start" font-weight="normal">tokens spent producing it</text>
+<text x="30.0" y="34.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="23" fill="#1f1d2b" text-anchor="start" font-weight="bold">What compaction costs</text>
+<text x="30.0" y="58.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="start" font-weight="normal">mean tokens per scenario, same run</text>
+<text x="30.0" y="392.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#8a8598" text-anchor="start" font-weight="normal">Compaction shrinks the context roughly 16x and spends more tokens than sending the conversation whole.</text>
+</svg>

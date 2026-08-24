@@ -1,0 +1,126 @@
+name: Context Loss Report
+description: Something important disappeared during compaction, or the receiving agent could not continue the work.
+title: "[context loss] "
+labels: ["context-loss"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the report we most want. MemHandoff is experimental, and the
+        interesting cases are the ones where it drops something that mattered.
+
+        **Before you paste anything:** remove API keys, tokens, credentials,
+        `.env` contents, private conversations, proprietary code, customer data,
+        and personal information. A `.ctx` package contains real conversation
+        text — read it before attaching it. If a faithful reproduction would
+        require private material, build a smaller synthetic one that fails the
+        same way; that is usually a better bug report anyway.
+
+  - type: input
+    id: source-agent
+    attributes:
+      label: Source agent
+      description: Where the conversation came from.
+      placeholder: Claude Code 2.1.x / generic JSON Lines export
+    validations:
+      required: true
+
+  - type: input
+    id: receiving-agent
+    attributes:
+      label: Receiving agent
+      description: What you handed the compiled context to, if anything.
+      placeholder: Claude, GPT-4o, a local model, or "not applicable"
+
+  - type: input
+    id: length
+    attributes:
+      label: Approximate conversation length
+      description: Messages, tokens, or file size — whatever you know.
+      placeholder: ~400 messages, roughly 90k tokens
+
+  - type: dropdown
+    id: strategy
+    attributes:
+      label: Compaction strategy
+      options:
+        - simple_summary_v1
+        - phase_5_baseline
+        - hybrid_v1
+        - full_context (reference)
+        - not sure
+    validations:
+      required: true
+
+  - type: input
+    id: budget
+    attributes:
+      label: Context budget
+      description: The token budget you compiled against.
+      placeholder: "--budget 4000"
+
+  - type: input
+    id: model
+    attributes:
+      label: Model used for extraction, if any
+      placeholder: openai/gpt-oss-120b on Groq, or "none — no --extract"
+
+  - type: textarea
+    id: lost
+    attributes:
+      label: What information was lost?
+      description: Be specific. "A constraint disappeared" is harder to act on than the constraint.
+      placeholder: |
+        The session agreed twice that report files must never be written to the
+        shared NFS mount. The compiled context does not mention it, and the
+        receiving agent proposed writing there.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have been preserved, and why does it matter?
+    validations:
+      required: true
+
+  - type: textarea
+    id: produced
+    attributes:
+      label: What did MemHandoff actually produce?
+      description: Output of `open-context inspect`, or the compiled context. Sanitised.
+      render: text
+
+  - type: dropdown
+    id: reproducible
+    attributes:
+      label: Can you reproduce it?
+      options:
+        - "Yes — every time"
+        - "Sometimes"
+        - "Once, and I still have the artifacts"
+        - "No"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: |
+        Commands, and a sanitised transcript or `.ctx` if you can share one.
+        A synthetic conversation that fails the same way is ideal.
+      render: shell
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+
+  - type: checkboxes
+    id: sanitised
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have removed credentials, private conversations, and personal data from everything above.
+          required: true

@@ -28,6 +28,8 @@ The archive stores payloads whose shape nothing in this codebase understands. It
 
 One log per session, so opening a session never touches another's bytes and a damaged session cannot cost the others.
 
+The manifest declares which session the directory holds, and `open` refuses to proceed unless that matches the session asked for. A directory that was copied, renamed, or assembled by hand would otherwise attribute one session's conversation to another, which is a worse outcome than failing to open. Format and version are checked first, then identity: a manifest this build cannot read is not worth comparing identities against.
+
 ## Format, and why
 
 **Append-only JSONL with a rebuildable binary sidecar index.**
@@ -64,9 +66,27 @@ The hash is byte-exact and deliberately does **not** normalise Unicode. `Evidenc
 
 `verify()` streams the file and returns the positions of every damaged record rather than raising at the first one, so a caller can report the extent of the damage.
 
+## Durability boundary
+
+**The data file is the durability boundary.** An append is durable once `records.jsonl` has been written and `fsync`ed. Nothing is ever considered written on the strength of an index entry alone.
+
+**The index is derived data and may lag.** It can be short, stale, deleted, or torn, and recovery rebuilds it from the data file. `rebuild_index()` does the same on demand. This is why the index needs no durability guarantee of its own: losing it costs a rescan, never a record.
+
+Stated as one rule: if it is in the data file it happened, and if it is only in the index it did not.
+
+## Concurrency
+
+**A `SessionLog` has a single writer. Concurrent writes to the same session are unsupported in Phase 3.**
+
+Nothing enforces this. There is no lock file, no advisory lock, no queue, no writer process. Two writers appending to one log will interleave their bytes and corrupt it, and neither will be told.
+
+Reads are safe alongside other readers, and alongside a single writer: a reader only ever sees whole synced lines, and a torn tail is what recovery is for.
+
+The write-coordination model is still deferred. Phase 4 did not need it: an import is one writer for the duration of one call, which is exactly the supported case. Choosing between a lock file, a single writer process, and a serialised queue depends on how agent adapters actually write — whether an adapter streams during a live session, whether a CLI can run against a session an agent is holding open, and whether writers share a machine. That is the adapter phases' question, and picking before then would mean picking twice.
+
 ## Crash behaviour
 
-**Write order is the guarantee.** A record is written to the data file and `fsync`ed before its index entry is written. If the process dies between the two, the index is short and the data file is whole, which recovery repairs by rescanning the tail. The reverse order would leave an index entry pointing at bytes that were never written, which is not repairable.
+**Write order follows from the durability boundary.** A record is written to the data file and `fsync`ed before its index entry is written. If the process dies between the two, the index is short and the data file is whole, which recovery repairs by rescanning the tail. The reverse order would leave an index entry pointing at bytes that were never written, which is not repairable.
 
 **Recovery is bounded.** Opening an archive scans only from the end of the last indexed record to the end of the file. A clean archive reads nothing.
 
@@ -74,7 +94,7 @@ The hash is byte-exact and deliberately does **not** normalise Unicode. `Evidenc
 
 **Damage anywhere else is corruption, not a failed write, and is never repaired.** A record in the body that fails its hash raises `CorruptRecordError` on read and appears in `verify()`. It is not truncated away, because that would be deleting history to make a file look healthy.
 
-Tested cases: torn final record, unparseable final line, crash between data sync and index write, lost index, deleted index, torn index entry, index describing more records than the data file contains, mid-file corruption, reordered records, unknown format, future format version, repeated reopen.
+Tested cases: torn final record, unparseable final line, crash between data sync and index write, lost index, deleted index, torn index entry, index describing more records than the data file contains, mid-file corruption, reordered records, unknown format, future format version, manifest naming another session, manifest with no session id, repeated reopen.
 
 ## Memory
 
@@ -120,16 +140,17 @@ log.recovery                         # RecoveryReport from the last open
 | `RecordNotFoundError` | No record at that position |
 | `CorruptRecordError` | A record fails its hash or will not parse |
 | `ArchiveFormatError` | Written in a format or version this build does not understand |
+| `ManifestMismatchError` | The manifest names a different session than the directory holding it |
 | `DuplicateSeqError` | Defined for a rewrite attempt; unreachable while positions are archive-assigned |
 
 ## Unresolved
 
-**No cross-process write lock.** Two writers on one session log will interleave and corrupt it. Single-writer is assumed and unenforced. A lock file is the likely answer once an agent adapter can write concurrently with a CLI.
+**Single-writer is assumed and unenforced.** Stated as an invariant under [Concurrency](#concurrency) rather than implemented. Phase 4 decides the write-coordination model, once agent adapters show what actually contends.
 
 **No compaction of the archive itself.** It grows forever. That is correct for now, since it is the source of truth, but a very long-lived project will want segmentation or cold storage.
 
-**Nothing links the archive to SQLite yet.** A `Message` row and its archive record refer to the same thing by id with no enforced correspondence, and no phase has yet defined which writes both. Phase 4 will have to decide whether import writes the archive first, SQLite first, or both in one operation, and what happens when one succeeds and the other does not.
+**Nothing links the archive to SQLite yet.** A `Message` row and its archive record refer to the same thing by id with no enforced correspondence, and no phase has yet defined which writes both. Phase 4 did not resolve it: import writes only the archive, and the connection to the session layer is a shared session id by convention. See [import.md](import.md).
 
 **`fsync` per append is slow on some filesystems.** `extend` amortises it, but a high-frequency single-append workload may need a configurable durability level. No measurement exists yet.
 
-**Manifest is not hashed.** Corrupting `manifest.json` is detected only insofar as it stops parsing.
+**Manifest is not hashed.** Format, version, and session identity are checked on open, so a manifest that disagrees with its directory is caught. Everything else about it is not: `created_at` can be rewritten freely, and damage that still parses into the right three fields is invisible. The check is a consistency check, not an authenticity one.

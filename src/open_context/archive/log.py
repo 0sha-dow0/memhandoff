@@ -9,11 +9,22 @@ Two files plus a manifest:
     records.idx       rebuildable offsets, 12 bytes per record
 ```
 
-**Write order matters.** A record is written to the data file and synced before
-its index entry is written. If the process dies between the two, the index is
-short and the data file is whole, which is repaired by scanning the tail. The
-reverse order would leave an index entry pointing at bytes that were never
-written, which is not repairable.
+**The data file is the durability boundary.** An append is durable once
+``records.jsonl`` is written and ``fsync``ed. The index is derived data and may
+lag; recovery can rebuild it from the data file. Nothing is ever considered
+written on the strength of an index entry alone.
+
+**Write order follows from that.** A record is written to the data file and
+synced before its index entry is written. If the process dies between the two,
+the index is short and the data file is whole, which is repaired by scanning the
+tail. The reverse order would leave an index entry pointing at bytes that were
+never written, which is not repairable.
+
+**A SessionLog has a single writer.** Concurrent writes to the same session are
+unsupported in Phase 3. There is no lock, and two writers appending to one log
+will interleave their bytes and corrupt it. The write-coordination model is
+Phase 4's decision, once agent adapters exist and the contention is real rather
+than hypothetical.
 
 **Recovery is bounded.** Opening an archive scans only from the end of the last
 indexed record to the end of the file, not the whole history. A clean archive
@@ -39,6 +50,7 @@ from open_context.archive.errors import (
     ArchiveFormatError,
     CorruptRecordError,
     DuplicateSeqError,
+    ManifestMismatchError,
     RecordNotFoundError,
 )
 from open_context.archive.index import OffsetIndex
@@ -82,8 +94,13 @@ class IntegrityReport:
 class SessionLog:
     """Append-only log for one session.
 
-    Not safe to share across processes for writing. Reads are safe alongside
-    other readers.
+    **Single writer.** Concurrent writes to the same session are unsupported in
+    Phase 3, within a process or across processes. Nothing enforces this yet.
+    Reads are safe alongside other readers and alongside a single writer, since
+    a reader only ever sees whole synced lines.
+
+    **The data file is the durability boundary.** The index is derived and may
+    lag it; ``rebuild_index`` reconstructs it from the data file at any time.
     """
 
     def __init__(self, directory: Path) -> None:
@@ -117,7 +134,12 @@ class SessionLog:
             + "\n"
         )
 
-    def _check_manifest(self) -> None:
+    def _check_manifest(self, session_id: str) -> None:
+        """Check the manifest describes this build's format and this session.
+
+        Format first, then identity: a manifest this build cannot read is not
+        worth comparing identities against.
+        """
         manifest: dict[str, Any] = json.loads(self.manifest_path.read_text())
         found = str(manifest.get("format", "unknown"))
         if found != FORMAT:
@@ -125,9 +147,12 @@ class SessionLog:
         version = int(manifest.get("version", 0))
         if version > FORMAT_VERSION:
             raise ArchiveFormatError(f"{FORMAT} v{version}", f"{FORMAT} v{FORMAT_VERSION}")
+        declared = str(manifest.get("session_id", ""))
+        if declared != session_id:
+            raise ManifestMismatchError(session_id, declared)
 
-    def _open_existing(self) -> None:
-        self._check_manifest()
+    def _open_existing(self, session_id: str) -> None:
+        self._check_manifest(session_id)
         self.recovery = self._recover()
         self._count = self.index.count()
 

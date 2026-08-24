@@ -1,0 +1,3 @@
+# A blank issue is still allowed: not every useful report fits a form, and a
+# form that turns people away is worse than a slightly messy issue.
+blank_issues_enabled: true

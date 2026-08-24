@@ -85,7 +85,9 @@ These hold across every phase. A change that breaks one is an architecture chang
 
 **Context is task-dependent.** The same history compiles to different contexts for different tasks and different budgets. That is the whole thesis.
 
-**State is model-independent.** Nothing in storage or the state graph refers to a specific provider's message format, token count, or model name. Providers are adapters at the edge.
+**State is model-independent.** Nothing in storage or the state graph refers to a specific provider's message format, token count, or model name. Providers are adapters at the edge, reached only through the `LLMProvider` and `Tokenizer` interfaces, and the dependency direction is enforced by tests rather than convention. See [llm.md](llm.md).
+
+**An estimate is never presented as an exact token count.** Every token count says how it was produced, and combining an exact count with an estimate yields an estimate. A budget computed from a heuristic that is treated as measured overflows the window, and the failure looks like a provider bug rather than a measurement one.
 
 **Every important state item has provenance.** A decision without source message IDs is not trustworthy and cannot be audited when it turns out to be wrong.
 
@@ -176,5 +178,27 @@ All three are stored. Current state is derived from ordering, not from the last 
 ## Storage
 
 Two stores. The archive holds raw conversation as append-only JSONL on the filesystem; SQLite holds indexed metadata and interpreted structure. The conversation is not duplicated into SQLite. See [archive.md](archive.md) and [storage.md](storage.md).
+
+Raw history reaches the archive through import adapters, which are the only place a provider's transport format appears on the way in, exactly as the context compiler is the only place one appears on the way out. An adapter translates a provider export into a normalized event and keeps the provider record as parsed alongside it, so a field the model has no home for is not discarded; it never interprets what the conversation means. See [import.md](import.md).
+
+## Compaction
+
+The first compactor exists and is deliberately unambitious: summarize the older part of a session, keep the recent part verbatim, hold the result to a measured token budget. It is a **baseline intended for measurement, not the final MemHandoff algorithm**, and its failures are the evidence later phases are built on. It performs none of the four compaction operations below except summarize, produces no structured state, and returns an internal experimental representation rather than a portable package. See [baseline-compaction.md](baseline-compaction.md).
+
+## Evaluation
+
+The evaluation harness lives beside the runtime as `open_context_eval` and is not part of it: it depends on the runtime, the runtime never depends on it, and it is excluded from the distributed wheel. That direction is checked by a test rather than trusted.
+
+It measures **downstream task continuation, not summary quality**. The same task, model, prompt, and budget are held identical across every context representation, so a difference in outcome belongs to the representation. See [evaluation.md](evaluation.md).
+
+## Model access
+
+Everything that needs a model reaches it through `LLMProvider` and `Tokenizer`, never through a vendor SDK. The compaction engine, when it exists, will ask for text, structured data, a token count, or a context window, and will not learn whose model answered.
+
+```
+future compaction -> LLMProvider / Tokenizer -> one provider implementation -> a model
+```
+
+Providers register themselves by name, so an implementation needing an optional dependency is available when installed and simply absent when not. Only deterministic fakes ship in the base package, which is why the test suite needs no key, no network, and no local model server. See [llm.md](llm.md).
 
 Not PostgreSQL, not Redis, not a vector database. Retrieval starts with FTS5 and adds a local vector index only when a benchmark shows FTS5 is the bottleneck. Introducing a vector database before that measurement means carrying an operational dependency to solve a problem nobody has demonstrated.

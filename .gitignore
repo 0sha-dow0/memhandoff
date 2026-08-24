@@ -26,6 +26,13 @@ coverage.xml
 .env.*
 config.local.toml
 
+# Credentials. An API key must never reach a commit, a result file, or a log.
+*.key
+*.pem
+api?key/
+credentials*
+secrets*
+
 # Editors and OS
 .vscode/
 .idea/
