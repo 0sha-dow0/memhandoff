@@ -4,6 +4,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Version
 
 While the major version is 0, breaking changes can land in any release.
 
+## [Unreleased]
+
+### Fixed
+
+- Derive `open_context.__version__` from the installed distribution metadata,
+  with `pyproject.toml` as the uninstalled-source fallback, so runtime and
+  package versions cannot drift independently.
+- Scope the source distribution to public source, tests, documentation, and the
+  single published benchmark result. Ignored local benchmark runs and reports
+  no longer leak into build artifacts; an artifact-level regression test builds
+  an sdist containing a synthetic private sentinel and proves it is excluded.
+
 ## [0.1.0] - 2026-08-24
 
 First public release. The pipeline works end to end on real sessions: read a
