@@ -217,18 +217,21 @@ class SessionSurvey:
     tail: list[RawEvent] = field(default_factory=list)
     working_directory: str = ""
     """Where the session ran, which is what places it in a project."""
+    source: str = ""
+    """The importer that actually read the transcript."""
 
 
 def survey_session(source: str | Path, *, tail: int = RECENT_TURNS) -> SessionSurvey:
     """Read a transcript twice, holding only what each pass needs."""
     path = Path(source)
     importer = detect_importer(_sample(path))
+    claude_code = isinstance(importer, ClaudeCodeImporter)
     if isinstance(importer, ClaudeCodeImporter):
         importer = ClaudeCodeImporter(include_thinking=importer.include_thinking, keep_raw=False)
 
     # Pass one: identity only.
     skeleton: list[RawEvent] = []
-    survey = SessionSurvey()
+    survey = SessionSurvey(source=importer.provider)
     with path.open(encoding="utf-8") as handle:
         for result in importer.read(handle):
             if isinstance(result, MalformedRecord):
@@ -249,9 +252,18 @@ def survey_session(source: str | Path, *, tail: int = RECENT_TURNS) -> SessionSu
                 )
             )
 
-    live = active_thread(skeleton)
+    # Only Claude Code has the measured rewind and post-compaction tree
+    # semantics implemented by ``active_thread``. Generic JSONL preserves its
+    # source order; treating an absent Claude-only conversation ancestor as a
+    # compaction break made every ordinary generic message look like a resumed
+    # segment.
+    live = active_thread(skeleton) if claude_code else list(skeleton)
     survey.events_kept = len(live)
-    survey.segment_sizes = [len(part) for part in segments(skeleton)]
+    survey.segment_sizes = (
+        [len(part) for part in segments(skeleton)]
+        if claude_code
+        else ([len(skeleton)] if skeleton else [])
+    )
     keep = {event.source_id for event in live if event.source_id}
     del skeleton, live
 
@@ -558,7 +570,7 @@ def handoff(
         state=state,
         inherited=carried,
         title=title,
-        source="claude-code",
+        source=survey.source,
         created_by="open_context handoff",
         archive_records=cited or None,
         archive_reference=reference,

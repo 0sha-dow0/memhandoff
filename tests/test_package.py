@@ -88,6 +88,11 @@ def test_sdist_excludes_internal_benchmark_artifacts(tmp_path: Path) -> None:
     assert "benchmarks/reports/private-sentinel.txt" not in shipped
     assert not any("__pycache__" in PurePosixPath(path).parts for path in shipped)
     assert {
+        "examples/cross-agent-handoff/README.md",
+        "examples/cross-agent-handoff/agent-a.jsonl",
+        "examples/cross-agent-handoff/run.sh",
+    } <= shipped
+    assert {
         "LICENSE",
         "README.md",
         "THIRD_PARTY_NOTICES.md",

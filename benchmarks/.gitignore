@@ -1,5 +1,6 @@
 results/*
 reports/
+data/
 
 # The one run every published number and chart derives from is tracked, so the
 # figures in the README can be audited and redrawn without an API credential.

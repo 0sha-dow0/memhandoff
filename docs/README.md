@@ -7,6 +7,7 @@ Start with [getting-started.md](getting-started.md).
 | Topic | Where |
 | --- | --- |
 | Install and first handoff | [getting-started.md](getting-started.md) |
+| Copy-paste Agent A to Agent B example | [../examples/cross-agent-handoff/README.md](../examples/cross-agent-handoff/README.md) |
 | What the system is, and why | [architecture.md](architecture.md), [product-architecture.md](product-architecture.md) |
 | The `.ctx` package format | [ctx-format.md](ctx-format.md) |
 | Compiling a package for an agent | [compiler.md](compiler.md) |
@@ -34,3 +35,7 @@ deleted at the cost of the lesson in it.
 
 Where a result is negative, it is stated as a negative result. The project does
 not claim to beat a plain summary, because on its own hardest dataset it does not.
+
+New retrieval and compaction research is currently paused unless it directly
+unblocks usability or credibility. Existing published negative and inconclusive
+findings remain part of the public record.

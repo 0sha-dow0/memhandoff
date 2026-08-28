@@ -2,9 +2,15 @@
 
 ## Before you open a pull request
 
-This project is built in phases, one layer at a time. See [docs/phases.md](docs/phases.md) for the current position and what is next.
+The current priority is making a real Agent A to Agent B handoff easy to try,
+understand, and criticize. The most useful contribution is usually a small
+reproducible context-loss case, an importer for a real agent export, a usability
+fix, or clearer documentation.
 
-The most useful thing you can do before writing code is open an issue describing the problem. A pull request that implements three phases ahead of the current one will be hard to review and will probably be declined, not because the code is bad but because the layer underneath it is not settled yet.
+Open an issue before starting a large architecture or research change. V2
+research and additional benchmark experiments are paused unless they directly
+unblock usability or credibility. Existing negative and inconclusive results
+remain published; do not retune scenarios or methodology to improve a score.
 
 ## Setup
 
@@ -40,9 +46,10 @@ involve:
 | | |
 | --- | --- |
 | **Report a failure** | A session where context was lost or a receiving agent could not continue. Use the [Context Loss Report](.github/ISSUE_TEMPLATE/context-loss.yml) template. This is the most useful thing you can send. |
+| **Improve the first handoff** | Remove friction from the quickstart, example, CLI messages, or feedback path. |
 | **Add an adversarial scenario** | A case the current dataset cannot catch. See [docs/adversarial.md](docs/adversarial.md) for what is already covered. |
 | **Improve an importer or a compile target** | Adding an agent format needs `detect` and `read`; adding a target needs one function that shapes an already-budgeted context. |
-| **Propose a compaction strategy** | See below — it must be evaluated against the existing baselines. |
+| **Propose a compaction strategy** | Discuss it first; research expansion is not the current default. If accepted, it must be evaluated against the existing baselines. |
 | **Improve documentation** | Particularly anywhere the reasoning is missing rather than the facts. |
 
 You do not need a credential for any of it. The suite is offline, and the
@@ -181,7 +188,7 @@ before it is written. That includes the `.ctx` layout, the archive record shape,
 the provider and tokenizer protocols, the compile targets, and where the portable
 layer stops and a renderer begins.
 
-Open an [Architecture Proposal](../../issues/new?template=architecture-proposal.yml)
+Open an [Architecture Proposal](https://github.com/0sha-dow0/memhandoff/issues/new?template=architecture-proposal.yml)
 saying what problem it solves, what it changes, what it breaks, what it costs,
 and what you considered instead. A proposal that argues the current design is
 wrong is welcome — say which constraint it fails.

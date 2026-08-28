@@ -1,105 +1,179 @@
 # Getting started
 
-Take a long session from one coding agent and continue it in another.
+MemHandoff moves useful working context from Agent A to Agent B. The quickest
+way to see the whole path is the bundled offline example; after that, replace
+its transcript with one of your own.
 
-## Install
+## Requirements
+
+- Python 3.12 or newer
+- macOS, Linux, or Windows
+- no account, server, API key, or model call for the basic handoff
+
+The runtime has one direct dependency, pydantic.
+
+## Complete a handoff in under five minutes
+
+The current public release is `v0.1.0`. To try the current `main` branch and its
+bundled example, install from source.
+
+On macOS or Linux:
+
+```bash
+git clone https://github.com/0sha-dow0/memhandoff.git
+cd memhandoff
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install .
+./examples/cross-agent-handoff/run.sh
+```
+
+On Windows PowerShell, install the same way and run the three commands directly:
+
+```powershell
+git clone https://github.com/0sha-dow0/memhandoff.git
+cd memhandoff
+py -3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install .
+
+New-Item -ItemType Directory -Force memhandoff-demo\archive
+open-context handoff examples\cross-agent-handoff\agent-a.jsonl --store memhandoff-demo\archive --out memhandoff-demo\export.ctx --title "Customer export writer"
+open-context validate memhandoff-demo\export.ctx --archive memhandoff-demo\archive
+open-context compile memhandoff-demo\export.ctx --target generic --budget 800 --task "Continue the export work." | Out-File -Encoding utf8 memhandoff-demo\agent-b-context.json
+```
+
+Open `memhandoff-demo/agent-b-context.json`. Its `text` value is the context for
+Agent B. Paste it into a different agent and ask:
+
+> What should you do next, and what must you not change?
+
+The receiving agent should recover all seven facts listed in the
+[example walkthrough](../examples/cross-agent-handoff/README.md). If it does not,
+open a [Context Loss Report](https://github.com/0sha-dow0/memhandoff/issues/new?template=context-loss.yml).
+
+This example is deliberately small enough to fit in the recent-context window.
+It proves the packaging and cross-agent workflow, not long-session compaction
+quality.
+
+## Install the published release
 
 ```bash
 pip install open-context-runtime
 ```
 
-Python 3.12 or newer. The only dependency is pydantic. No database server, no
-account, no network call for anything except extraction — which is opt-in.
-
-## The five-minute version
+Package versions and source-branch features can differ between releases. Check
+what you installed with:
 
 ```bash
-# 1. find a session
+python -c "import open_context; print(open_context.__version__)"
+open-context --help
+```
+
+## Hand off your own session
+
+Claude Code sessions are discovered automatically:
+
+```bash
 open-context sessions
+```
 
-# 2. turn one into a portable package
+Use the returned path, or any generic JSON Lines transcript:
+
+```bash
 open-context handoff ~/.claude/projects/<project>/<uuid>.jsonl \
-    --store ./ctx --out project.ctx
+  --store ./ctx --out project.ctx --title "My work"
 
-# 3. read what you got
 open-context inspect project.ctx
-
-# 4. check it
 open-context validate project.ctx --archive ./ctx
-
-# 5. compile it for whoever continues the work
 open-context compile project.ctx \
-    --target anthropic --budget 4000 --task "Finish the export writer."
+  --target generic --budget 4000 --task "Continue this work." \
+  > agent-b-context.json
 ```
 
-Step 5 prints a request body in that provider's shape. Paste the `system` text
-into another agent, or send the JSON yourself — this tool never makes the call.
+Paste the `text` value from `agent-b-context.json` into Agent B. For a provider
+request body instead, choose `anthropic`, `openai`, `gemini`, or `local` as the
+target. MemHandoff shapes the payload but never sends it.
 
-## What you actually get
+A generic JSON Lines transcript has one object per line. The importer recognizes
+common field names including `id`, `parent_id`, `role`, `content`, and
+`timestamp`:
 
-`handoff` tells you, every time:
-
+```json
+{"id":"1","role":"user","content":"Keep port 9443 reserved."}
+{"id":"2","parent_id":"1","role":"assistant","content":"Understood."}
 ```
+
+## Read the handoff report
+
+Without model extraction, a typical report says:
+
+```text
 session ses_912bcf79732042d7b702749c
   read      192 events
   kept      187 (5 abandoned as rewound)
   state     0 items
   warning: no state was extracted, so this package carries recent context and
-           provenance but no goals, constraints, or decisions; pass a provider
-           to extract it
+           provenance but no goals, constraints, or decisions
 ```
 
-Read that warning. **Without `--extract`, a package carries recent conversation
-and provenance and nothing else.** That is useful — it is a compact, verifiable
-record of where the work stood — but it is not the goals-and-constraints summary
-the project is ultimately for.
+That warning is a contract. A recent-only package is useful for a short transfer
+but does not pretend to have inferred older goals or decisions. Up to 12 spoken
+turns are carried verbatim; tool traffic is excluded from that window.
 
-## Getting real state out of it
+The three artifacts have different jobs:
 
-Extraction is the one step that needs a model, so it is opt-in and needs a
-provider configured:
+| Artifact | What it is |
+| --- | --- |
+| Archive | Original records, append-only and hashed; stays local |
+| `.ctx` | Portable state, evidence, recent turns, and an archive reference |
+| Compiled context | Budgeted input shaped for one receiving agent family |
+
+## Optional model extraction
+
+Extraction asks a configured model to infer typed goals, constraints, decisions,
+rationale, tasks, and open questions from the archived conversation:
 
 ```bash
-export OPEN_CONTEXT_PROVIDER=groq          # or openrouter
-export OPEN_CONTEXT_MODEL=llama-3.3-70b-versatile
-export OPEN_CONTEXT_API_KEY=...
+export OPEN_CONTEXT_PROVIDER=groq       # or openrouter
+export OPEN_CONTEXT_MODEL=<model>
+export OPEN_CONTEXT_API_KEY=<key>
 
-open-context handoff session.jsonl --store ./ctx --out project.ctx --extract
+open-context handoff session.jsonl \
+  --store ./ctx --out project.ctx --extract
 ```
 
-Now the package carries typed goals, constraints, decisions with their
-rationale, tasks, and open questions, each pointing back at the messages it came
-from.
+This is the only handoff step that sends conversation text over the network. It
+is opt-in, reports failed windows, and does not hide a partial extraction.
 
-Only models on an explicit free-model allowlist are callable. That is deliberate:
-this project runs its own benchmarks on free tiers and refuses to make a paid
-request by accident. See [llm.md](llm.md).
-
-## What the pieces are
-
-| | |
-| --- | --- |
-| **archive** | the original conversation, append-only, hashed per record. Never destroyed. |
-| **`.ctx` package** | one JSON file: state, evidence, recent turns, a pointer to the archive |
-| **compiled context** | what a specific model receives, budgeted and in its own request shape |
-
-The archive stays on your machine. The package is the portable part. The
-compiled context is generated per agent and never stored.
+The repository's own tests and benchmarks may call only explicitly allowlisted
+free models and never fall back to paid usage. Users can configure any compatible
+model. See [llm.md](llm.md).
 
 ## Honest limits
 
-- **Import reads Claude Code transcripts and generic JSON Lines.** Other agents
-  need an importer; the protocol is `detect` plus `read`.
-- **Compaction has not been shown to beat a plain summary.** The project's own
-  adversarial benchmark says so — see [adversarial.md](adversarial.md). What it
-  did establish is that compaction costs 25–28% of what full context retains at
-  9–14× compression, and that what it loses is exact values.
-- **A `.ctx` from someone else is untrusted input.** `validate` reports what a
-  package carries; nothing in this tool executes anything from one. See
-  [hardening.md](hardening.md).
-- **Nothing sends your conversation anywhere** unless you pass `--extract`, and
-  then only the archived session goes to the model you configured.
+- Recent-only handoff loses older facts once a conversation exceeds its window.
+- Extraction quality varies with the configured model; one measured 8B model
+  produced no usable state for most benchmark cells.
+- The published compactor does not clearly beat a simple summary, and hybrid
+  compaction remains inconclusive.
+- Lexical retrieval helps with exact evidence but fails across vocabulary gaps.
+- Only Claude Code and generic JSON Lines importers exist today.
+- A `.ctx` is untrusted input. Validation does not make its text safe or correct.
 
-## Where to go next
+Read [hardening.md](hardening.md) before accepting packages from other people and
+[benchmark.md](benchmark.md) before interpreting quality claims.
 
-[The docs index](README.md) maps the rest.
+## If context is lost
+
+Do not share a private transcript just to report a bug. Remove credentials,
+private conversations, proprietary code, customer data, and personal information.
+Prefer a small synthetic transcript that fails in the same way.
+
+The [Context Loss Report](https://github.com/0sha-dow0/memhandoff/issues/new?template=context-loss.yml)
+asks for source and receiving agents, budget, expected context, actual context,
+and reproduction commands. Those failures are the feedback this project most
+needs.
+
+The [documentation index](README.md) maps the formats, architecture, compiler,
+retrieval, security model, experiments, and contribution guide.

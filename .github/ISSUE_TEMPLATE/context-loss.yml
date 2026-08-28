@@ -30,7 +30,16 @@ body:
     attributes:
       label: Receiving agent
       description: What you handed the compiled context to, if anything.
-      placeholder: Claude, GPT-4o, a local model, or "not applicable"
+      placeholder: ChatGPT, Claude, Codex, Gemini, a local model, or "not applicable"
+
+  - type: input
+    id: version
+    attributes:
+      label: MemHandoff version
+      description: The installed version, or the commit when running from source.
+      placeholder: 0.1.0 or main@abc1234
+    validations:
+      required: true
 
   - type: input
     id: length
@@ -44,6 +53,9 @@ body:
     attributes:
       label: Compaction strategy
       options:
+        - recent context only (no --extract)
+        - model extraction (--extract)
+        - archive retrieval (--retrieve)
         - simple_summary_v1
         - phase_5_baseline
         - hybrid_v1

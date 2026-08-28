@@ -660,12 +660,13 @@ def test_no_benchmark_result_is_committed_to_the_repository():
 
     root = Path(open_context_eval.__file__).parents[2]
     ignored = (root / "benchmarks" / ".gitignore").read_text()
-    assert "results/" in ignored and "reports/" in ignored
+    allowed_roots = {"data", "reports", "results"}
+    assert all(f"{directory}/" in ignored for directory in allowed_roots)
 
     stray = [
         path
         for path in (root / "benchmarks").rglob("*.jsonl")
-        if "results" not in path.parts and "reports" not in path.parts
+        if path.relative_to(root / "benchmarks").parts[0] not in allowed_roots
     ]
     assert stray == [], f"benchmark results outside the ignored directories: {stray}"
 

@@ -6,6 +6,18 @@ While the major version is 0, breaking changes can land in any release.
 
 ## [Unreleased]
 
+### Added
+
+- Add a fully offline Agent A to Agent B example, a source-install quickstart
+  that produces a validated `.ctx` and generic receiving-agent context in under
+  five minutes, and a regression test that proves every planted constraint and
+  exact value reaches the compiled context.
+- Add a short replayable terminal recording of the same public example.
+- Refocus the README and contribution path on trying real handoffs, reporting
+  context-loss failures, and launch usability. Existing negative and
+  inconclusive benchmark results remain visible. Further V2 retrieval research
+  is not part of this launch-focused change.
+
 ### Fixed
 
 - Derive `open_context.__version__` from the installed distribution metadata,
