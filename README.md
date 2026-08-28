@@ -7,7 +7,7 @@ into a portable, inspectable `.ctx` file, then compiles it into context another
 agent can use. The original conversation stays on your machine unless you
 explicitly opt into model-based extraction.
 
-![A session leaving one agent and arriving at another](docs/assets/memhandoff-identity.svg)
+![MemHandoff — context that travels, work that continues](docs/assets/memhandoff-hero.png)
 
 This is an experimental open-source side project. The useful question is not
 whether it sounds like “AI memory”; it is whether a different agent can actually
@@ -113,6 +113,8 @@ Agent A conversation
 Agent B continues
 ```
 
+![A session leaving one agent and arriving at another](docs/assets/memhandoff-identity.svg)
+
 Three layers stay separate:
 
 | Layer | Purpose | Portable? |
@@ -162,10 +164,18 @@ it does not establish superiority:
 | Phase 5 baseline | 0.75 | Does not clearly beat summary |
 | Hybrid | — | Inconclusive; exit criterion unmet |
 
+![Deterministic score per arm on the adversarial dataset](docs/assets/benchmarks/benchmark-retention.svg)
+
 At 9–14× compression, all observed losses cluster in scenarios involving exact
-values. Compaction also spends more total tokens than sending these relatively
-short conversations whole. The project has not established where that tradeoff
-becomes worthwhile.
+values.
+
+![Score per scenario, showing all loss concentrated in two scenarios](docs/assets/benchmarks/benchmark-per-scenario.svg)
+
+Compaction also spends more total tokens than sending these relatively short
+conversations whole. The project has not established where that tradeoff becomes
+worthwhile.
+
+![Context size against tokens spent producing it](docs/assets/benchmarks/benchmark-compression.svg)
 
 Negative and inconclusive runs are not hidden or retuned. Read the full
 [benchmark methodology](docs/benchmark.md), [adversarial results](docs/adversarial.md),
@@ -210,6 +220,8 @@ ruff format --check
 mypy .
 python -m build
 ```
+
+![Test suite: 1,288 passed, 2 skipped, 0 failed](docs/assets/benchmarks/benchmark-test-suite.svg)
 
 Tests run offline by default. Do not add paid calls, paid fallbacks, secrets, or
 real private transcripts. Do not change benchmark scenarios to improve a score.
