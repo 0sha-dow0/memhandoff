@@ -42,3 +42,32 @@ jobs:
 
       - name: Tests
         run: pytest -q
+
+  package:
+    # The editable install above never exercises a built artifact, which is how
+    # a wheel once shipped reporting a version its own metadata contradicted.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build
+        run: |
+          pip install build
+          python -m build
+
+      - name: Install only the wheel, into a clean environment
+        run: |
+          python -m venv /tmp/wheelenv
+          /tmp/wheelenv/bin/pip install dist/*.whl pytest build hatchling
+
+      - name: The installed package is the one we meant to ship
+        run: /tmp/wheelenv/bin/python -m pytest tests/test_package.py -q
+
+      - name: The console script runs
+        run: /tmp/wheelenv/bin/open-context --help
