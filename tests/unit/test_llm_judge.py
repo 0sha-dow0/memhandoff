@@ -9,15 +9,25 @@ Offline throughout, against the deterministic fakes.
 
 import pytest
 
-from open_context.llm import RateLimitError
+from open_context.llm import Capability, ModelInfo, RateLimitError
 from open_context.llm.fakes import FailingProvider, FakeProvider
+from open_context.llm.free_models import (
+    APPROVED_FREE_MODELS,
+    REASONING_FLOOR,
+    Reasoning,
+    find_free_model,
+)
 from open_context_eval.judge import (
     JUDGE_PROMPT_V1,
+    VERDICT_TOKENS,
     JudgeVerdict,
     KeywordJudge,
     LLMJudge,
+    _output_cap_for,
     parse_verdict,
 )
+
+GENERATES = frozenset({Capability.TEXT_GENERATION})
 
 
 def judge_with(reply: str) -> LLMJudge:
@@ -161,3 +171,60 @@ def test_the_keyword_stand_in_still_answers_what_it_was_given():
 def test_undecided_carries_no_pass():
     assert JudgeVerdict.undecided("nope").passed is False
     assert JudgeVerdict.undecided("nope").evaluated is False
+
+
+# ----------------------------------------------------------------------
+# The output budget
+
+
+def test_a_reasoning_judge_is_given_room_to_reason_before_answering():
+    """A cap below the reasoning floor is spent before the verdict is written.
+
+    The judge asks for two lines, so a naive cap looks generous. A model that
+    reasons first spends the whole allowance on reasoning and returns nothing,
+    which is how a benchmark run was voided once: an empty completion reads as
+    a failed answer rather than a failed request.
+    """
+    provider = FakeProvider(
+        reply="YES\nok",
+        info=ModelInfo(provider="groq", model="openai/gpt-oss-120b", capabilities=GENERATES),
+    )
+    LLMJudge(provider).judge("a", "q")
+
+    spec = find_free_model("groq", "openai/gpt-oss-120b")
+    assert spec is not None and spec.reasoning is not Reasoning.NONE
+    cap = provider.requests[0].max_output_tokens
+    assert cap is not None and cap > REASONING_FLOOR
+
+
+def test_a_direct_judge_is_not_given_reasoning_room_it_cannot_use():
+    provider = FakeProvider(
+        reply="YES\nok",
+        info=ModelInfo(
+            provider="openrouter", model="google/gemma-4-31b-it:free", capabilities=GENERATES
+        ),
+    )
+    LLMJudge(provider).judge("a", "q")
+    assert provider.requests[0].max_output_tokens == VERDICT_TOKENS
+
+
+def test_an_unknown_model_is_assumed_to_reason():
+    """Off the allowlist there is no measurement, so assume the expensive case."""
+    provider = FakeProvider(
+        reply="YES\nok", info=ModelInfo(provider="acme", model="unmeasured", capabilities=GENERATES)
+    )
+    LLMJudge(provider).judge("a", "q")
+    cap = provider.requests[0].max_output_tokens
+    assert cap is not None and cap > REASONING_FLOOR
+
+
+def test_every_approved_free_model_can_answer_the_judge():
+    """The judge must not be silently limited to the models that fit its cap.
+
+    Six of eight approved models reason before answering. With a fixed cap the
+    judge could only run on the two that do not — the smallest ones, and exactly
+    the class that fails the reference-arm control.
+    """
+    for spec in APPROVED_FREE_MODELS:
+        cap = _output_cap_for(spec.provider, spec.model_id)
+        assert cap > spec.reasoning_overhead, spec.model_id

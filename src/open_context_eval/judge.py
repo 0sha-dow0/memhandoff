@@ -50,6 +50,7 @@ from typing import Protocol, runtime_checkable
 
 from open_context.compaction import Prompt
 from open_context.llm import ChatMessage, GenerationRequest, LLMError, LLMProvider
+from open_context.llm.free_models import REASONING_FLOOR, find_free_model
 
 
 @dataclass(frozen=True)
@@ -133,6 +134,28 @@ substring checks could not make.
 """
 
 
+VERDICT_TOKENS = 120
+"""Enough for ``YES`` or ``NO`` and one sentence, with room to spare."""
+
+
+def _output_cap_for(provider: str, model: str) -> int:
+    """A cap the model can actually answer within, reasoning included.
+
+    A judge that reasons before answering spends tokens on the reasoning first.
+    Budget only for the verdict and the reasoning consumes the whole allowance,
+    leaving an empty completion — the failure that voided an entire benchmark
+    run once already. So the measured overhead for this model is added to what
+    the verdict itself needs.
+
+    A model that is not on the free allowlist has no measured overhead, so it is
+    given the floor rather than assumed to answer directly. Being too generous
+    here costs nothing: the cap bounds a two-line reply, not a budget.
+    """
+    spec = find_free_model(provider, model)
+    overhead = spec.reasoning_overhead if spec is not None else REASONING_FLOOR
+    return overhead + VERDICT_TOKENS
+
+
 class LLMJudge:
     """A judge backed by a real model, through the ordinary provider interface.
 
@@ -145,6 +168,7 @@ class LLMJudge:
         self.prompt = prompt
         info = provider.model_info()
         self._name = f"llm:{info.provider}/{info.model}:{prompt.identifier}"
+        self._output_cap = _output_cap_for(info.provider, info.model)
 
     @property
     def name(self) -> str:
@@ -168,7 +192,7 @@ class LLMJudge:
         request = GenerationRequest.of(
             ChatMessage.system(self.prompt.text),
             ChatMessage.user(f"QUESTION:\n{question}\n\nANSWER TO GRADE:\n{response}"),
-            max_output_tokens=200,
+            max_output_tokens=self._output_cap,
             temperature=0.0,
         )
         try:

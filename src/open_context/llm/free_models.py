@@ -294,16 +294,6 @@ APPROVED_FREE_MODELS: tuple[FreeModelSpec, ...] = (
     ),
     FreeModelSpec(
         provider="openrouter",
-        model_id="nvidia/nemotron-3-nano-30b-a3b:free",
-        billing_class=BillingClass.FREE,
-        context_window=256_000,
-        verified_on=VERIFIED_ON,
-        verified_by=VERIFIED_BY,
-        reasoning=Reasoning.SEPARATE_FIELD,
-        reasoning_measured_on=OPENROUTER_REASONING_MEASURED_ON,
-    ),
-    FreeModelSpec(
-        provider="openrouter",
         model_id="nvidia/nemotron-3-super-120b-a12b:free",
         billing_class=BillingClass.FREE,
         context_window=262_144,

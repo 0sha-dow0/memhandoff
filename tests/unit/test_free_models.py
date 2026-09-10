@@ -383,7 +383,6 @@ def test_the_measured_openrouter_behaviour_is_recorded():
     measured = {
         "google/gemma-4-31b-it:free": Reasoning.NONE,
         "google/gemma-4-26b-a4b-it:free": Reasoning.NONE,
-        "nvidia/nemotron-3-nano-30b-a3b:free": Reasoning.SEPARATE_FIELD,
         "nvidia/nemotron-3-super-120b-a12b:free": Reasoning.SEPARATE_FIELD,
         "liquid/lfm-2.5-2.6b:free": Reasoning.SEPARATE_FIELD,
     }
