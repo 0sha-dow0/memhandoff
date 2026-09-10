@@ -59,6 +59,7 @@ from open_context_eval.strategies import (
     FULL_CONTEXT,
     HYBRID_V1,
     PHASE_5_BASELINE,
+    PHASE_5_LITERALS,
     SIMPLE_SUMMARY_V1,
     EvaluationStrategy,
     default_strategies,
@@ -71,6 +72,7 @@ BENCHMARK_STRATEGIES: tuple[str, ...] = (
     FULL_CONTEXT,
     SIMPLE_SUMMARY_V1,
     PHASE_5_BASELINE,
+    PHASE_5_LITERALS,
     HYBRID_V1,
 )
 """The arms of the first benchmark.

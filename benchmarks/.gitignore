@@ -5,3 +5,6 @@ data/
 # The one run every published number and chart derives from is tracked, so the
 # figures in the README can be audited and redrawn without an API credential.
 !results/v4-adversarial-8b.jsonl
+# The same run regraded by a judge that passes its own control, which is what
+# makes the judged half of the benchmark readable at all.
+!results/v4-adversarial-8b-rejudged-120b.jsonl

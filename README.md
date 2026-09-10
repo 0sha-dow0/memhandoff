@@ -157,12 +157,12 @@ record-level provenance. See the [format](docs/ctx-format.md),
 The current published adversarial benchmark is deliberately visible even though
 it does not establish superiority:
 
-| Arm | Deterministic retention | Reading |
-| --- | ---: | --- |
-| Full context | 1.00 | Reference, not a competitor |
-| Simple summary | 0.72 | One-call baseline |
-| Phase 5 baseline | 0.75 | Does not clearly beat summary |
-| Hybrid | — | Inconclusive; exit criterion unmet |
+| Arm | Deterministic retention | Judged | Reading |
+| --- | ---: | ---: | --- |
+| Full context | 1.00 | 0.92 | Reference, not a competitor |
+| Simple summary | 0.72 | 0.79 | One-call baseline |
+| Phase 5 baseline | 0.75 | 0.79 | Does not clearly beat summary |
+| Hybrid | — | — | Inconclusive; exit criterion unmet |
 
 ![Deterministic score per arm on the adversarial dataset](docs/assets/benchmarks/benchmark-retention.svg)
 
@@ -176,6 +176,22 @@ conversations whole. The project has not established where that tradeoff becomes
 worthwhile.
 
 ![Context size against tokens spent producing it](docs/assets/benchmarks/benchmark-compression.svg)
+
+The judged column was blank until recently, and the reason is worth stating.
+Judged questions ask whether something was *avoided*, which no substring check
+can decide: the same term appears in an endorsement and in a rejection. The 8B
+model grading them could not make that distinction — it failed answers for
+naming UTF-8 only to rule it out — and it passed just 9 of 24 questions on the
+arm holding the entire conversation. A grader that cannot pass the control
+cannot grade anything below it, so every judged number was withheld.
+
+Regraded by a model large enough to read a rejection, the reference arm passes
+22 of 24 and the column becomes legible. It says the same thing the
+deterministic checks say: the two compaction arms tie, at 0.79 each. Structured
+state still has not been shown to beat a plain one-call summary, and now it has
+not been shown on two independent measures rather than one.
+
+![Judged questions once the grader passes its own control](docs/assets/benchmarks/benchmark-judged.svg)
 
 Negative and inconclusive runs are not hidden or retuned. Read the full
 [benchmark methodology](docs/benchmark.md), [adversarial results](docs/adversarial.md),

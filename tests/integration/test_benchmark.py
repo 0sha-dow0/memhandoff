@@ -19,6 +19,7 @@ from open_context_eval import (
     FULL_CONTEXT,
     HYBRID_V1,
     PHASE_5_BASELINE,
+    PHASE_5_LITERALS,
     REAL_MODEL,
     REFERENCE_BUDGET,
     SIMPLE_SUMMARY_V1,
@@ -111,9 +112,14 @@ def test_the_matrix_separates_reference_arms_from_budgeted_ones():
     plan = config(budgets=(80, 160, 240), repetitions=2)
 
     assert plan.reference_strategies == [FULL_CONTEXT]
-    assert plan.compacted_strategies == [SIMPLE_SUMMARY_V1, PHASE_5_BASELINE, HYBRID_V1]
+    assert plan.compacted_strategies == [
+        SIMPLE_SUMMARY_V1,
+        PHASE_5_BASELINE,
+        PHASE_5_LITERALS,
+        HYBRID_V1,
+    ]
     assert plan.cells == 2 * 2 * (1 + len(plan.compacted_strategies) * 3)
-    assert "1 reference + 3 compacted x 3 budgets" in plan.describe()
+    assert "1 reference + 4 compacted x 3 budgets" in plan.describe()
 
 
 def test_the_default_matrix_size_follows_from_the_arms():
@@ -204,6 +210,7 @@ def test_the_whole_matrix_runs(tmp_path):
         FULL_CONTEXT: 15,
         SIMPLE_SUMMARY_V1: 45,
         PHASE_5_BASELINE: 45,
+        PHASE_5_LITERALS: 45,
         HYBRID_V1: 45,
     }
 
@@ -315,7 +322,7 @@ def test_no_arm_receives_another_arms_representation(tmp_path):
         if "YOUR TASK" in request.messages[1].content
     ]
     carrying_summary = [body for body in continuations if "THE-SUMMARY-MARKER" in body]
-    assert len(carrying_summary) == 3, "only the arms that summarise carry a summary"
+    assert len(carrying_summary) == 4, "only the arms that summarise carry a summary"
 
 
 def test_no_expected_answer_reaches_the_model(tmp_path):

@@ -42,6 +42,13 @@ from open_context_eval.prompts import SIMPLE_SUMMARY_PROMPT_V1, build_summary_re
 
 FULL_CONTEXT = "full_context"
 PHASE_5_BASELINE = "phase_5_baseline"
+PHASE_5_LITERALS = "phase_5_literals"
+"""The Phase 5 compactor with the exact-value ledger turned on.
+
+The same compactor and the same prompt, differing in one config field, so a
+difference between the two arms is attributable to the ledger and not to a
+second change riding along with it.
+"""
 
 SIMPLE_SUMMARY_V1 = "simple_summary_v1"
 """The plain-summarization arm, versioned in its own name.
@@ -388,6 +395,7 @@ def default_strategies() -> dict[str, EvaluationStrategy]:
         FULL_CONTEXT: FullContextStrategy(),
         SIMPLE_SUMMARY_V1: SimpleSummaryStrategy(),
         PHASE_5_BASELINE: Phase5BaselineStrategy(),
+        PHASE_5_LITERALS: Phase5BaselineStrategy(BaselineConfig(preserve_literals=True)),
         HYBRID_V1: HybridStrategy(),
     }
 
@@ -395,6 +403,7 @@ def default_strategies() -> dict[str, EvaluationStrategy]:
 __all__ = [
     "FULL_CONTEXT",
     "PHASE_5_BASELINE",
+    "PHASE_5_LITERALS",
     "SIMPLE_SUMMARY_V1",
     "EvaluationStrategy",
     "FullContextStrategy",

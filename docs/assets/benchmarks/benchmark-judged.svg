@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 548" width="780" height="548" role="img">
+<title>What a working judge sees</title>
+<defs>
+<pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+<line x1="0" y1="0" x2="0" y2="7" stroke="#1f1d2b" stroke-width="1.1" opacity="0.30"/>
+</pattern>
+</defs>
+<rect width="780" height="548" fill="#fdfcf8"/>
+<text x="30.0" y="38.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="23" fill="#1f1d2b" text-anchor="start" font-weight="bold">What a working judge sees</text>
+<text x="30.0" y="62.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="start" font-weight="normal">same answers, same questions - regraded by a judge that passes its own control</text>
+<text x="30.0" y="82.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#8a8598" text-anchor="start" font-weight="normal">an 8B judge passed 9 of 24 on the reference arm; this one passes 22 of 24</text>
+<path d="M132.8,380.9 Q426.3,379.8 720.8,379.2" fill="none" stroke="#1f1d2b" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M132.1,379.3 Q425.2,379.9 719.4,379.9" fill="none" stroke="#1f1d2b" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M131.0,379.2 Q132.0,260.7 132.4,139.8" fill="none" stroke="#1f1d2b" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M131.7,379.1 Q132.4,260.3 132.6,140.2" fill="none" stroke="#1f1d2b" stroke-width="1.5" stroke-linecap="round"/>
+<text x="118.0" y="385.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="end" font-weight="normal">0.00</text>
+<path d="M132.0,320.0 Q426.0,320.0 720.0,320.0" fill="none" stroke="#8a8598" stroke-width="1.0" stroke-linecap="round" stroke-dasharray="3 7"/>
+<text x="118.0" y="325.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="end" font-weight="normal">0.25</text>
+<path d="M132.0,260.0 Q426.0,260.0 720.0,260.0" fill="none" stroke="#8a8598" stroke-width="1.0" stroke-linecap="round" stroke-dasharray="3 7"/>
+<text x="118.0" y="265.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="end" font-weight="normal">0.50</text>
+<path d="M132.0,200.0 Q426.0,200.0 720.0,200.0" fill="none" stroke="#8a8598" stroke-width="1.0" stroke-linecap="round" stroke-dasharray="3 7"/>
+<text x="118.0" y="205.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="end" font-weight="normal">0.75</text>
+<path d="M132.0,140.0 Q426.0,140.0 720.0,140.0" fill="none" stroke="#8a8598" stroke-width="1.0" stroke-linecap="round" stroke-dasharray="3 7"/>
+<text x="118.0" y="145.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="end" font-weight="normal">1.00</text>
+<text x="40.0" y="260.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="15" fill="#8a8598" text-anchor="middle" font-weight="normal">judged</text>
+<path d="M194.7,159.6 L275.9,159.6 L275.4,380.4 L192.8,378.8 Z" fill="#c9bfe8" opacity="0.85"/>
+<path d="M194.7,159.6 L275.9,159.6 L275.4,380.4 L192.8,378.8 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="234.3" y="146.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="16" fill="#1f1d2b" text-anchor="middle" font-weight="bold">0.92</text>
+<text x="234.3" y="404.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">full context</text>
+<text x="234.3" y="420.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">(reference)</text>
+<text x="234.3" y="452.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="middle" font-weight="normal">22 of 24</text>
+<path d="M321.1,190.6 L403.2,189.9 L403.4,379.1 L320.3,379.5 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M321.1,190.6 L403.2,189.9 L403.4,379.1 L320.3,379.5 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="362.1" y="176.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="16" fill="#1f1d2b" text-anchor="middle" font-weight="bold">0.79</text>
+<text x="362.1" y="404.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">plain summary</text>
+<text x="362.1" y="452.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="middle" font-weight="normal">19 of 24</text>
+<path d="M449.9,189.1 L529.7,188.9 L529.5,379.4 L449.2,380.9 Z" fill="#8b7bc7" opacity="0.85"/>
+<path d="M449.9,189.1 L529.7,188.9 L529.5,379.4 L449.2,380.9 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="489.9" y="176.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="16" fill="#1f1d2b" text-anchor="middle" font-weight="bold">0.79</text>
+<text x="489.9" y="404.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">Phase 5</text>
+<text x="489.9" y="420.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">baseline</text>
+<text x="489.9" y="452.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="middle" font-weight="normal">19 of 24</text>
+<path d="M576.4,341.6 L658.1,341.5 L659.4,380.1 L576.2,378.9 Z" fill="url(#hatch)"/>
+<path d="M576.4,341.6 L658.1,341.5 L659.4,380.1 L576.2,378.9 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
+<text x="617.7" y="330.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="14" fill="#8a8598" text-anchor="middle" font-weight="normal">no score</text>
+<text x="617.7" y="404.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="13" fill="#8a8598" text-anchor="middle" font-weight="normal">hybrid</text>
+<text x="617.7" y="452.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="11" fill="#8a8598" text-anchor="middle" font-weight="normal">1 of 8 scenarios</text>
+<text x="30.0" y="492.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#8a8598" text-anchor="start" font-weight="normal">The two compaction arms tie here exactly, as they do on the deterministic</text>
+<text x="30.0" y="510.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="12" fill="#8a8598" text-anchor="start" font-weight="normal">checks. Structured state still has not been shown to beat a plain summary.</text>
+</svg>

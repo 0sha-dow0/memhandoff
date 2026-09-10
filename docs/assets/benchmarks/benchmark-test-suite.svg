@@ -9,7 +9,7 @@
 <path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="#8b7bc7" opacity="0.85"/>
 <path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="url(#hatch)"/>
 <path d="M48.7,108.5 L445.0,107.9 L446.5,200.8 L49.9,200.0 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>
-<text x="248.0" y="152.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="26" fill="#1f1d2b" text-anchor="middle" font-weight="bold">1,288</text>
+<text x="248.0" y="152.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="26" fill="#1f1d2b" text-anchor="middle" font-weight="bold">1,314</text>
 <text x="248.0" y="178.0" font-family="'Comic Sans MS','Chalkboard SE','Bradley Hand',Segoe Print,cursive,sans-serif" font-size="14" fill="#8a8598" text-anchor="middle" font-weight="normal">passed</text>
 <path d="M452.7,107.8 L557.6,109.0 L558.1,200.7 L453.8,199.1 Z" fill="#c9bfe8" opacity="0.85"/>
 <path d="M452.7,107.8 L557.6,109.0 L558.1,200.7 L453.8,199.1 Z" fill="none" stroke="#1f1d2b" stroke-width="2.1" stroke-linejoin="round"/>

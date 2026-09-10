@@ -36,6 +36,11 @@ OUT = pathlib.Path("docs/assets/benchmarks")
 # repetitions. Named once so a chart cannot quietly be drawn from a partial run.
 AUTHORITATIVE = RESULTS / "v4-adversarial-8b.jsonl"
 
+# The same run, regraded by a judge that passes its own control. Kept separate
+# from the file above rather than replacing it: the deterministic results are
+# identical in both, and the only thing that moved is who did the grading.
+REJUDGED = RESULTS / "v4-adversarial-8b-rejudged-120b.jsonl"
+
 DISOWNED = "should not be read as"
 """A cell its own strategy says is not that strategy. Excluded from its score."""
 
@@ -506,6 +511,101 @@ def chart_compression(rows: list[Row]) -> pathlib.Path:
 
 
 # ----------------------------------------------------------------------
+# 5. What a judge that can read a rejection sees
+
+
+def judged_score(rows: list[Row]) -> tuple[float | None, int, int]:
+    """Share of judged questions passed, and the sample it came from."""
+    verdicts = [v for row in rows for v in row["judged"] if v["evaluated"]]
+    if not verdicts:
+        return None, 0, 0
+    passed = sum(1 for v in verdicts if v["passed"])
+    return passed / len(verdicts), passed, len(verdicts)
+
+
+def chart_judged(rows: list[Row]) -> pathlib.Path:
+    """Judged questions, once the grader could be trusted with them.
+
+    Every published number until now excluded these. The run was graded by an 8B
+    judge that passed 9 of 24 reference questions while the same arm passed every
+    deterministic check, so the judged column measured the grader. Regraded by a
+    120B judge the reference arm passes 22 of 24, and the column says something
+    about the arms again.
+    """
+    good = usable(rows)
+    measured = []
+    for arm in ARMS:
+        cells = [r for r in good if r["strategy"] == arm]
+        score, passed, total = judged_score(cells)
+        scenarios = len({r["scenario_id"] for r in cells})
+        measured.append((arm, score, passed, total, scenarios))
+
+    s = Sketch(780, 548, seed=23)
+    left, right, base, top = 132, 720, 380, 140
+
+    s.text(30, 38, "What a working judge sees", size=23, anchor="start", weight="bold")
+    s.text(
+        30,
+        62,
+        "same answers, same questions - regraded by a judge that passes its own control",
+        size=13,
+        anchor="start",
+        colour=MUTED,
+    )
+    s.text(
+        30,
+        82,
+        "an 8B judge passed 9 of 24 on the reference arm; this one passes 22 of 24",
+        size=12,
+        anchor="start",
+        colour=MUTED,
+    )
+
+    s.line(left, base, right, base)
+    s.line(left, base, left, top)
+    for frac in (0.0, 0.25, 0.5, 0.75, 1.0):
+        y = base - frac * (base - top)
+        if frac:
+            s.line(left, y, right, y, colour=MUTED, width=1.0, dash="3 7")
+        s.text(left - 14, y + 5, f"{frac:.2f}", size=13, anchor="end", colour=MUTED)
+    s.text(left - 92, (base + top) / 2, "judged", size=15, colour=MUTED)
+
+    width = (right - left) / (len(ARMS) + 0.6)
+    for index, (arm, score, passed, total, scenarios) in enumerate(measured):
+        cx = left + width * (index + 0.8)
+        if score is None or scenarios < 6:
+            s.box(cx - width * 0.32, base - 38, width * 0.64, 38, hatch=True)
+            s.text(cx, base - 50, "no score", size=14, colour=MUTED)
+            s.text(cx, base + 24, LABEL[arm], size=13, colour=MUTED)
+            s.text(cx, base + 72, f"{scenarios} of 8 scenarios", size=11, colour=MUTED)
+            continue
+        height = score * (base - top)
+        fill = PURPLE if arm != "full_context" else PURPLE_SOFT
+        s.box(cx - width * 0.32, base - height, width * 0.64, height, fill=fill)
+        s.text(cx, base - height - 14, f"{score:.2f}", size=16, weight="bold")
+        s.text(cx, base + 24, LABEL[arm], size=13, colour=MUTED)
+        s.text(cx, base + 72, f"{passed} of {total}", size=11, colour=MUTED)
+
+    s.text(
+        30,
+        492,
+        "The two compaction arms tie here exactly, as they do on the deterministic",
+        size=12,
+        anchor="start",
+        colour=MUTED,
+    )
+    s.text(
+        30,
+        510,
+        "checks. Structured state still has not been shown to beat a plain summary.",
+        size=12,
+        anchor="start",
+        colour=MUTED,
+    )
+    return write("benchmark-judged.svg", s.render("What a working judge sees"))
+
+
+# ----------------------------------------------------------------------
 # 4. The test suite
 
 
@@ -655,6 +755,11 @@ def main() -> int:
         chart_per_scenario(rows),
         chart_compression(rows),
     ]
+
+    if REJUDGED.is_file():
+        written.append(chart_judged(load(REJUDGED)))
+    else:
+        print("no rejudged run; skipping the judged chart", file=sys.stderr)
 
     summary = read_test_summary()
     if summary:
