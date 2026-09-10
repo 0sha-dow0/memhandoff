@@ -470,6 +470,16 @@ These affect layers beyond the one being built. They are recorded rather than an
 
 **Repaired as dataset `v3`, which is built.** A cleverer pattern was rejected: `RetentionCheck`'s own documentation already says the honest answer to "it cannot tell a mention from a use" is a judged question, and a heuristic skipping terms near a negation would silently reclassify real failures too. `v3` applies one rule — deterministic checks assert presence, judged questions assert absence — removing all 20 negative substring assertions and replacing each with a question that reports *not evaluated* without a judge. `v2` and `v1` are left unedited and asserted so by test.
 
+**The exact-value ledger is built and mechanically verified; its benchmark effect is unmeasured.** 2026-08-24.
+
+Every deterministic failure in the `v4` matrix is an exact value — the write timeout in `adv-exact-values`, the port in `adv-tool-heavy` — on every compacted arm and on neither reference arm. Nothing else fails anywhere. The mechanism is stated by a failing answer itself: "the original context does not specify the exact value", followed by an invented one.
+
+`preserve_literals` lifts those values out deterministically, before the model is asked for anything, and carries them beside the summary. Against the real `adv-exact-values` conversation, with a summariser that returns prose containing no digits — which is what the real run produced — the baseline loses `74` and the ledger arm keeps it, labelled. That is `tests/integration/test_literal_ledger_on_dataset.py`, offline and deterministic.
+
+*What is not established is whether it moves the benchmark.* Carrying the value into the context is not the same as a downstream model using it, and that needs a real generation model. **No approved free model can currently serve as one for this benchmark.** Groq's three are all reasoning models, and the compaction budget doubles as the output cap, so at 80, 160 or 240 tokens every one of them is refused below `REASONING_FLOOR` — the largest published budget is less than half the floor. OpenRouter's two non-reasoning models are the only candidates left, and both returned upstream 429s throughout. Paid models are out by policy, so the arm is registered, tested, and recorded as unmeasured rather than run against a model the free tier does not offer.
+
+This is worth stating as a constraint on the harness rather than an accident of one afternoon: a benchmark whose budgets sit below the reasoning floor can only ever be run on non-reasoning models, and the free supply of those is one upstream rate limit wide.
+
 **The judge is a capacity floor, and the harness was holding it below the floor.** Measured 2026-08-24 by rejudging the reference arm's stored answers from the `v4` run, so no compaction or continuation was re-run.
 
 Two separate defects, one masking the other.
