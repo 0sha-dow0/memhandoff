@@ -44,6 +44,11 @@ import time
 from collections.abc import Iterator
 
 from open_context.compaction.budget import BaselineConfig, BudgetAllocation, allocate
+from open_context.compaction.literals import (
+    extract_literals,
+    missing_from,
+    render_ledger,
+)
 from open_context.compaction.prompts import (
     BASELINE_SUMMARY_V1,
     CHUNK_HEADER,
@@ -88,6 +93,10 @@ WARN_UNKNOWN_WINDOW = (
     "without a size check"
 )
 WARN_NO_HISTORY = "there was no history to summarize; the whole conversation fits the recent window"
+WARN_LITERALS_DROPPED = (
+    "exact values from the summarized range were dropped: the summary already filled its "
+    "budget, so there was no room to carry them"
+)
 WARN_RECENT_DROPPED_LOST = (
     "recent events were dropped to fit the target and are absent from the output "
     "entirely; the historical summary covers only what came before the recent "
@@ -243,7 +252,40 @@ class _Run:
             combined = self._fit_for_request(combined, budget)
             text = self._request_summary(COMBINE_HEADER, combined, budget)
 
+        text = self._with_literals(text, split, budget)
         return self._fit_summary(text, budget)
+
+    def _with_literals(self, summary: str, split: int, budget: int) -> str:
+        """Append the exact values the summary let go of.
+
+        Deterministic and after the fact: the model is never asked to keep these,
+        because asking is what already failed. The ledger names only values the
+        summary no longer states, so a summary that kept a number pays nothing
+        for it, and it is capped so exact values cannot crowd out the prose that
+        explains them.
+        """
+        if not self.config.preserve_literals or not self.config.literal_budget_tokens:
+            return summary
+
+        history = "\n".join(render_event(e) for e in stream_archive(self.log, 0, split))
+        missing = missing_from(extract_literals(history), summary, self._recent_text(split))
+        if not missing:
+            return summary
+
+        ledger = render_ledger(missing)
+        allowed = min(
+            self.config.literal_budget_tokens,
+            max(0, budget - self.tokenizer.count_text(summary).count),
+        )
+        if allowed <= 0:
+            self.warnings.append(WARN_LITERALS_DROPPED)
+            return summary
+        ledger = self._truncate(ledger, allowed)
+        return f"{summary}\n\n{ledger}" if summary else ledger
+
+    def _recent_text(self, split: int) -> str:
+        """The verbatim tail, which needs no ledger entry for what it already says."""
+        return "\n".join(render_event(e) for e in stream_archive(self.log, split, self.log.count))
 
     def _chunk_history(self, split: int, output_budget: int) -> Iterator[str]:
         """Rendered history in pieces that fit the model's context window.

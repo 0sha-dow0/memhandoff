@@ -901,3 +901,71 @@ def _events_in(log, start, stop):
 def _payload_of(event):
     """The content an event contributes, for checking what a request contained."""
     return body_of(event)
+
+
+# ----------------------------------------------------------------------
+# The exact-value ledger
+
+
+def literal_conversation():
+    """History carrying an exact value, then enough filler to force compaction."""
+    records = [
+        {"id": "v1", "role": "user", "content": "The client write timeout is 74 seconds."},
+        {"id": "v2", "role": "assistant", "content": "Understood, 74 seconds it is."},
+    ]
+    records += [
+        {"id": f"pad{i}", "role": "user", "content": f"Unrelated discussion point number {i}. " * 8}
+        for i in range(40)
+    ]
+    return records
+
+
+def test_the_summary_alone_can_lose_an_exact_value(make_log):
+    """The behaviour being fixed, asserted so the fix has something to beat."""
+    log = make_log(literal_conversation(), name="lost.jsonl")
+    result = compact(log, 400, provider=summarizer(reply="They discussed configuration."))
+
+    assert "74" not in result.historical_summary
+
+
+def test_preserving_literals_carries_the_value_the_summary_dropped(make_log):
+    log = make_log(literal_conversation(), name="kept.jsonl")
+    result = compact(
+        log,
+        400,
+        provider=summarizer(reply="They discussed configuration."),
+        config=BaselineConfig(preserve_literals=True),
+    )
+
+    assert "74" in result.historical_summary
+    assert "write timeout" in result.historical_summary
+
+
+def test_preserving_literals_is_off_unless_asked_for(make_log):
+    """The measured baseline has to keep behaving as measured."""
+    assert BaselineConfig().preserve_literals is False
+
+
+def test_a_value_the_summary_kept_is_not_repeated(make_log):
+    log = make_log(literal_conversation(), name="nodupe.jsonl")
+    result = compact(
+        log,
+        400,
+        provider=summarizer(reply="They set the write timeout to 74 seconds."),
+        config=BaselineConfig(preserve_literals=True),
+    )
+
+    assert result.historical_summary.count("74") == 1
+
+
+def test_the_ledger_does_not_call_the_model(make_log):
+    """Deterministic on purpose: asking a model to keep these is what failed."""
+    log = make_log(literal_conversation(), name="calls.jsonl")
+    plain = summarizer(reply="They discussed configuration.")
+    compact(log, 400, provider=plain)
+    without = len(plain.requests)
+
+    withled = summarizer(reply="They discussed configuration.")
+    compact(log, 400, provider=withled, config=BaselineConfig(preserve_literals=True))
+
+    assert len(withled.requests) == without

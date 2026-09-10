@@ -54,6 +54,22 @@ class BaselineConfig:
     truncation_marker: str = " [...truncated]"
     """Appended when text had to be cut, so a reader can see that it was."""
 
+    preserve_literals: bool = False
+    """Carry exact values the summary dropped, alongside it.
+
+    Off by default so the measured baseline keeps behaving as measured. Every
+    deterministic failure in the `v4` matrix is an exact value the summariser
+    discarded, so this is the one knob aimed at a failure the benchmark actually
+    found rather than at one it might.
+    """
+
+    literal_budget_tokens: int = 80
+    """Ceiling on the ledger, taken out of the summary's share.
+
+    A ledger that grows without bound would buy exact values by spending the
+    prose that says why they matter.
+    """
+
     def __post_init__(self) -> None:
         if not 0.0 < self.recent_fraction < 1.0:
             raise InvalidConfigurationError(
@@ -72,6 +88,8 @@ class BaselineConfig:
             raise InvalidConfigurationError("minimum_target_tokens must be positive")
         if self.prompt_reserve_tokens < 0:
             raise InvalidConfigurationError("prompt_reserve_tokens must not be negative")
+        if self.literal_budget_tokens < 0:
+            raise InvalidConfigurationError("literal_budget_tokens must not be negative")
 
 
 @dataclass(frozen=True)
