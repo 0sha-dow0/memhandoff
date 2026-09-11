@@ -476,9 +476,15 @@ Every deterministic failure in the `v4` matrix is an exact value — the write t
 
 `preserve_literals` lifts those values out deterministically, before the model is asked for anything, and carries them beside the summary. Against the real `adv-exact-values` conversation, with a summariser that returns prose containing no digits — which is what the real run produced — the baseline loses `74` and the ledger arm keeps it, labelled. That is `tests/integration/test_literal_ledger_on_dataset.py`, offline and deterministic.
 
-*What is not established is whether it moves the benchmark.* Carrying the value into the context is not the same as a downstream model using it, and that needs a real generation model. **No approved free model can currently serve as one for this benchmark.** Groq's three are all reasoning models, and the compaction budget doubles as the output cap, so at 80, 160 or 240 tokens every one of them is refused below `REASONING_FLOOR` — the largest published budget is less than half the floor. OpenRouter's two non-reasoning models are the only candidates left, and both returned upstream 429s throughout. Paid models are out by policy, so the arm is registered, tested, and recorded as unmeasured rather than run against a model the free tier does not offer.
+*Whether it moves the benchmark score is unmeasured, and the reason is structural rather than circumstantial.* Two measurements bound it.
 
-This is worth stating as a constraint on the harness rather than an accident of one afternoon: a benchmark whose budgets sit below the reasoning floor can only ever be run on non-reasoning models, and the free supply of those is one upstream rate limit wide.
+**The failure only exists above roughly 9x compression.** Re-running `adv-exact-values` and `adv-tool-heavy` at budget 900 — 3.5x to 4.3x on these conversations — every arm passes every check, the plain `phase_5_baseline` included. At that ratio the summariser has room to keep the number, so there is no failure for a ledger to convert. The published failures are all at budget 160, where compression is 9x to 14x.
+
+**No approved free model can run at the budget where the failure appears.** The compaction budget doubles as the model's output cap. Groq's three models all reason before answering, so their summary share — `0.6 x budget` — must clear `REASONING_FLOOR`, which needs a budget above roughly 860. Every budget in the published matrix is less than a third of that. The two non-reasoning models on the allowlist are OpenRouter's gemmas, and both returned upstream 429s across four attempts on two days.
+
+So the arm is registered, its mechanism is verified offline against the real conversation, and its score is recorded as unmeasured. Measuring it needs one of three things this project does not currently have: a free non-reasoning model that is not rate-limited, conversations long enough to reach 9x at a budget above the reasoning floor, or a paid model, which policy excludes.
+
+That last option is the honest framing of the gap. It is not that the experiment failed; it is that the free tier cannot express the operating point the failure lives at.
 
 **The judge is a capacity floor, and the harness was holding it below the floor.** Measured 2026-08-24 by rejudging the reference arm's stored answers from the `v4` run, so no compaction or continuation was re-run.
 

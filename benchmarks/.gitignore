@@ -8,3 +8,6 @@ data/
 # The same run regraded by a judge that passes its own control, which is what
 # makes the judged half of the benchmark readable at all.
 !results/v4-adversarial-8b-rejudged-120b.jsonl
+# The low-compression control: at 3.5-4.3x nothing is lost, which is what bounds
+# the exact-value failure to the high-compression end of the matrix.
+!results/v4-budget900-gpt-oss-120b.jsonl
